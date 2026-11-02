@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.edgio/
+.env
+.env.*
+!.env.example
+.DS_Store
+coverage/
+*.tsbuildinfo
+npm-debug.log*

@@ -1,0 +1,37 @@
+name: Sync Avitary catalogue
+
+on:
+  schedule:
+    - cron: '20 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: avitary-catalog-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Synchronize project catalogue
+        run: npm run sync:catalog
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ANILIBERTY_API_BASE: https://api.anilibria.app/api/v1
+          SYNC_PAGE_SIZE: '50'
+          SYNC_CONCURRENCY: '4'
+          SYNC_INCLUDE_EPISODES: 'true'
